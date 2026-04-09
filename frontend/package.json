@@ -1,0 +1,26 @@
+{
+  "name": "profitlens-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "antd": "^5.22.0",
+    "@ant-design/icons": "^5.5.0",
+    "@ant-design/charts": "^2.2.0",
+    "@ant-design/nextjs-registry": "^0.1.0",
+    "axios": "^1.7.0",
+    "dayjs": "^1.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
+}
