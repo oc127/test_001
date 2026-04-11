@@ -8,8 +8,13 @@ absurd. This module generates a reasonable baseline automatically:
 1. Start with the 30-day trailing average for each SKU
 2. Apply day-of-week weights (weekends usually sell more on Amazon)
 3. Apply a linear trend (is the SKU accelerating or decelerating?)
-4. Apply Amazon peak-season multipliers (Prime Day, BFCM)
-5. Apply Chinese New Year suppression (international shipping lag)
+4. Apply Amazon peak-season multipliers (Prime Day, BFCM, Christmas)
+
+Note: Chinese holidays (春节/国庆/双11) do NOT affect demand for cross-border
+Amazon FBA sellers — the inventory is already in Amazon's US/EU warehouses
+and Amazon ships directly to the end customer. Chinese holidays only affect
+the SUPPLY side (factory shutdowns extending lead time), which is handled
+separately in core.holiday_calendar.adjust_lead_time.
 
 The assistant's job becomes: **review and override specific dates** for known
 events (promotions, new listings, ad campaigns), not type everything.
@@ -22,7 +27,7 @@ from statistics import mean, stdev
 from typing import Optional
 
 from ..models import ForecastRecord, SalesRecord
-from .holiday_calendar import amazon_peak_multiplier, get_spring_festival
+from .holiday_calendar import amazon_peak_multiplier
 
 
 # Weekend boost — Amazon sales typically ~15% higher on Sat/Sun
@@ -174,15 +179,10 @@ def generate_baseline_forecast(
         # 3. Day of week weight
         raw *= weekday_weights[forecast_date.weekday()]
 
-        # 4. Amazon peak multiplier
+        # 4. Amazon peak multiplier (Prime Day / BFCM / Christmas)
+        # These are the only peaks that affect demand for FBA cross-border sellers.
         peak_mult, _ = amazon_peak_multiplier(forecast_date)
         raw *= peak_mult
-
-        # 5. CNY international shipping suppression (for China-based sellers)
-        cny = get_spring_festival(forecast_date.year)
-        if cny and abs((forecast_date - cny).days) <= 10:
-            # During CNY week, international shipping slows, sales dip ~20%
-            raw *= 0.8
 
         units = max(0, round(raw))
         records.append(

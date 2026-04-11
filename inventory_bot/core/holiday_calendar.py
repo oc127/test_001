@@ -3,14 +3,24 @@
 Why this exists
 ---------------
 Chinese manufacturing factories close for 2-4 weeks around Spring Festival
-(Chinese New Year). No Western inventory tool knows about this. For sellers
-sourcing from 1688 / Guangdong / Yiwu, missing this adjustment means
-ordering too late and running out during peak season.
+(Chinese New Year). No Western inventory tool knows about this. For
+cross-border Amazon sellers sourcing from 1688 / Guangdong / Yiwu, missing
+this adjustment means ordering too late and running out during peak season.
 
-This module:
-- Knows about CNY, Golden Week, Amazon peak seasons
-- Given a base lead time and an order date, returns an adjusted lead time
-- Explains WHY the adjustment was made (for the UI)
+IMPORTANT SCOPE
+---------------
+Chinese holidays in this module are **supply-side factors only**. They
+extend the lead time because factories close. They do NOT affect demand
+because the goods are sold to US / EU / JP consumers who don't care.
+
+Demand-side peak handling for cross-border Amazon sellers lives in
+`amazon_peak_multiplier()` below (Prime Day / BFCM / Christmas).
+
+This module exports:
+- adjust_lead_time(): supply-side lead time extension for CNY / Oct 1-7 /
+  (3C only) Double-11 domestic component pressure
+- amazon_peak_multiplier(): demand-side safety stock boost during Amazon
+  peak seasons
 """
 from __future__ import annotations
 
